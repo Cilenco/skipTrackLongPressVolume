@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Skip Track Settings</string>
+
+    <string name="pref_service" translatable="false">pref_service</string>
+    <string name="pref_hideIcon" translatable="false">pref_hideIcon</string>
+
+    <string name="hideIconTitle">Hide launcher icon</string>
+    <string name="hideIconSummary">Do not show the app icon in launcher</string>
+
+    <string name="enableServiceTitle">Enable Service</string>
+    <string name="enableServiceSummary">Hide launcher icon</string>
+</resources>
