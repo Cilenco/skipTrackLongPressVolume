@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.service.notification.NotificationListenerService;
 import android.view.KeyEvent;
 
+import static android.view.KeyEvent.FLAG_FROM_SYSTEM;
 import static android.view.KeyEvent.FLAG_LONG_PRESS;
 import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS;
@@ -49,14 +50,16 @@ public class VolumeKeyService extends NotificationListenerService implements OnV
         boolean isScreenOn = powerManager.isInteractive();
         boolean isMusicPlaying = audioManager.isMusicActive();
 
-        if(keyEvent.getFlags() != FLAG_LONG_PRESS) return;
+        int flags = keyEvent.getFlags();
+
+        if(!(flags == FLAG_FROM_SYSTEM || flags == FLAG_LONG_PRESS)) return;
         if(!isMusicPlaying || isScreenOn || !serviceEnabled) return;
 
         if(keyEvent.getKeyCode() == KEYCODE_VOLUME_UP) {
-            KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KEYCODE_MEDIA_NEXT);
+            KeyEvent event = new KeyEvent(keyEvent.getAction(), KEYCODE_MEDIA_NEXT);
             audioManager.dispatchMediaKeyEvent(event);
         } else {
-            KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KEYCODE_MEDIA_PREVIOUS);
+            KeyEvent event = new KeyEvent(keyEvent.getAction(), KEYCODE_MEDIA_PREVIOUS);
             audioManager.dispatchMediaKeyEvent(event);
         }
     }
