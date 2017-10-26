@@ -2,15 +2,33 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
+        android:key="@string/pref_hideIcon"
+        android:summary="@string/hideIconSummary"
+        android:title="@string/hideIconTitle" />
+
+    <SwitchPreference
+        android:defaultValue="false"
         android:key="@string/pref_service"
         android:summary="@string/enableServiceSummary"
         android:title="@string/enableServiceTitle" />
 
     <SwitchPreference
-        android:key="@string/pref_hideIcon"
-        android:title="@string/hideIconTitle"
-        android:summary="@string/hideIconSummary"
-        android:defaultValue="false" />
+        android:defaultValue="false"
+        android:key="@string/pref_enable_screen_on"
+        android:summary="@string/enableScreenOnSummary"
+        android:title="@string/enableScreenOn" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_enable_media_not_playing"
+        android:summary="@string/enableMediaNotPlayingSummary"
+        android:title="@string/enableMediaNotPlaying" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_enable_debug"
+        android:title="@string/enableDebug" />
+
 
 </PreferenceScreen>
