@@ -6,114 +6,92 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.widget.Toast;
 
 import com.cilenco.skiptrack.R;
 import com.cilenco.skiptrack.services.VolumeKeyService;
 
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
+
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 import static android.content.pm.PackageManager.DONT_KILL_APP;
 
-public class SettingsFragment extends PreferenceFragment {
+import static com.cilenco.skiptrack.utils.Constants.ARG_DEBUG;
+import static com.cilenco.skiptrack.utils.Constants.ARG_ENABLED;
+import static com.cilenco.skiptrack.utils.Constants.ARG_PERMISSION;
+import static com.cilenco.skiptrack.utils.Constants.PERMISSION_REQUEST;
+import static com.cilenco.skiptrack.utils.Constants.PERMISSION_REQUEST_ID;
 
-    private static final String REQUEST = "enabled_notification_listeners";
-    private static final int REQUEST_CODE = 0;
+public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private Intent mStartServiceIntent;
     private String PREF_KEY_HIDE_ICON;
-    private String PREF_KEY_ENABLE_SERVICE;
-    private String PREF_KEY_ENABLE_SCREEN_ON;
-    private String PREF_KEY_ENABLE_MEDIA_NOT_PLAYING;
-    private String PREF_KEY_ENABLE_DEBUG;
+    private String PREF_KEY_SERVICE_ENABLED;
+    private String PREF_KEY_DEBUG_ENABLED;
 
-    private boolean mEnableService, mEnableScreenOn, mEnableMediaNotPlaying, mEnableDebug;
+    private boolean serviceEnabled;
+    private boolean debugEnabled;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.settings);
 
-        PREF_KEY_HIDE_ICON = getString(R.string.pref_hideIcon);
-        PREF_KEY_ENABLE_SERVICE = getString(R.string.pref_service);
-        PREF_KEY_ENABLE_SCREEN_ON = getString(R.string.pref_enable_screen_on);
-        PREF_KEY_ENABLE_MEDIA_NOT_PLAYING = getString(R.string.pref_enable_media_not_playing);
-        PREF_KEY_ENABLE_DEBUG = getString(R.string.pref_enable_debug);
+        PREF_KEY_HIDE_ICON = getString(R.string.pref_hide_icon);
+        PREF_KEY_SERVICE_ENABLED = getString(R.string.pref_service);
+        PREF_KEY_DEBUG_ENABLED = getString(R.string.pref_debug);
 
-        init();
+        debugEnabled = ((SwitchPreferenceCompat) findPreference(PREF_KEY_DEBUG_ENABLED)).isChecked();
+        serviceEnabled = ((SwitchPreferenceCompat) findPreference(PREF_KEY_SERVICE_ENABLED)).isChecked();
+
+        startService();
     }
 
-    @Override // Set for a SwitchPreference so value is always a boolean
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    @Override // We only have SwitchPreferences so value is always a boolean
+    public boolean onPreferenceTreeClick(androidx.preference.Preference preference) {
         if (PREF_KEY_HIDE_ICON.equals(preference.getKey())) {
-            boolean checked = ((SwitchPreference) preference).isChecked();
-            PackageManager manager = getContext().getPackageManager();
+            boolean checked = ((SwitchPreferenceCompat) preference).isChecked();
+            PackageManager pm = getContext().getPackageManager();
+
             ComponentName componentName = new ComponentName(getContext(), LauncherActivity.class);
             int invisible = checked ? COMPONENT_ENABLED_STATE_DISABLED : COMPONENT_ENABLED_STATE_ENABLED;
-            manager.setComponentEnabledSetting(componentName, invisible, DONT_KILL_APP);
-            return true;
-        } else if (PREF_KEY_ENABLE_SERVICE.equals(preference.getKey())) {
-            mEnableService = ((SwitchPreference) preference).isChecked();
-            findPreference(PREF_KEY_ENABLE_SCREEN_ON).setEnabled(mEnableService);
-            findPreference(PREF_KEY_ENABLE_MEDIA_NOT_PLAYING).setEnabled(mEnableService);
-            if (mEnableService) {
-                enableServiceWithNotificationListener();
-            }
-        } else if (PREF_KEY_ENABLE_SCREEN_ON.equals(preference.getKey())) {
-            mEnableScreenOn = ((SwitchPreference) preference).isChecked();
-        } else if (PREF_KEY_ENABLE_MEDIA_NOT_PLAYING.equals(preference.getKey())) {
-            mEnableMediaNotPlaying = ((SwitchPreference) preference).isChecked();
-        } else if (PREF_KEY_ENABLE_DEBUG.equals(preference.getKey())) {
-            mEnableDebug = ((SwitchPreference) preference).isChecked();
+            pm.setComponentEnabledSetting(componentName, invisible, DONT_KILL_APP);
+
+        } else if (PREF_KEY_SERVICE_ENABLED.equals(preference.getKey())) {
+            serviceEnabled = ((SwitchPreferenceCompat) preference).isChecked();
+            if (serviceEnabled) enableNotificationListener();
+
+        } else if (PREF_KEY_DEBUG_ENABLED.equals(preference.getKey())) {
+            debugEnabled = ((SwitchPreferenceCompat) preference).isChecked();
         }
-        startServiceWithCommand();
-        return super.onPreferenceTreeClick(preferenceScreen, preference);
+
+        startService();
+        return super.onPreferenceTreeClick(preference);
     }
 
-    private void init() {
-        mEnableService = ((SwitchPreference) findPreference(PREF_KEY_ENABLE_SERVICE)).isChecked();
-        SwitchPreference screen = (SwitchPreference) findPreference(PREF_KEY_ENABLE_SCREEN_ON);
-        mEnableScreenOn = screen.isChecked();
-        screen.setEnabled(mEnableService);
-        SwitchPreference media = (SwitchPreference) findPreference(PREF_KEY_ENABLE_MEDIA_NOT_PLAYING);
-        mEnableMediaNotPlaying = media.isChecked();
-        media.setEnabled(mEnableService);
-        startServiceWithCommand();
-    }
-
-    private void startServiceWithCommand() {
+    private void startService() {
         final Context context = getContext();
-        if (mStartServiceIntent == null) {
-            mStartServiceIntent = new Intent(context, VolumeKeyService.class);
-            mStartServiceIntent.putExtra("PERMISSION", true);
-        }
-        mStartServiceIntent.putExtra("ENABLED", mEnableService);
-        mStartServiceIntent.putExtra("SCREEN_ON", mEnableScreenOn);
-        mStartServiceIntent.putExtra("MEDIA_NOT_PLAYING", mEnableMediaNotPlaying);
-        mStartServiceIntent.putExtra("DEBUG",mEnableDebug);
+
+        Intent mStartServiceIntent = new Intent(context, VolumeKeyService.class);
+
+        mStartServiceIntent.putExtra(ARG_PERMISSION, true);
+        mStartServiceIntent.putExtra(ARG_DEBUG, debugEnabled);
+        mStartServiceIntent.putExtra(ARG_ENABLED, serviceEnabled);
+
         context.startService(mStartServiceIntent);
-        if(mEnableDebug){
-            Toast.makeText(getContext(),getString(R.string.msg_start_service),Toast.LENGTH_SHORT).show();
-        }
+
+        if(debugEnabled) Toast.makeText(getContext(),getString(R.string.msg_start_service),Toast.LENGTH_SHORT).show();
     }
 
-    private void enableServiceWithNotificationListener() {
+    private void enableNotificationListener() {
         ContentResolver resolver = getContext().getContentResolver();
-        String listeners = Settings.Secure.getString(resolver, REQUEST);
+        String listeners = Settings.Secure.getString(resolver, PERMISSION_REQUEST);
+
         if (listeners == null || !listeners.contains(getContext().getPackageName())) {
-            if(mEnableDebug){
-                Toast.makeText(getContext(),getString(R.string.msg_jump_to_settings),Toast.LENGTH_SHORT).show();
-            }
             Intent requestIntent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
             requestIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(requestIntent,REQUEST_CODE);
+            startActivityForResult(requestIntent, PERMISSION_REQUEST_ID);
         }
     }
-
 }

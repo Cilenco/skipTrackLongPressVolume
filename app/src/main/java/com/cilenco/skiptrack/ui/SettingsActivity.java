@@ -1,17 +1,13 @@
 package com.cilenco.skiptrack.ui;
 
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
-
-import com.cilenco.skiptrack.services.VolumeKeyService;
+import android.view.Menu;
 
 import com.cilenco.skiptrack.R;
 
-public class SettingsActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,4 +15,9 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.main_activity);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.help, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 }

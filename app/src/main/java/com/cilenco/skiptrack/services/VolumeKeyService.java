@@ -2,7 +2,6 @@ package com.cilenco.skiptrack.services;
 
 import android.media.AudioManager;
 import android.media.session.MediaSessionManager;
-import android.media.session.MediaSessionManager.OnVolumeKeyLongPressListener;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
@@ -19,7 +18,7 @@ import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
 
-public class VolumeKeyService extends NotificationListenerService implements OnVolumeKeyLongPressListener {
+public class VolumeKeyService extends NotificationListenerService { //implements OnVolumeKeyLongPressListener {
     private static final int FLAG_FROM_ADB = 0;
     private MediaSessionManager mediaSessionManager;
 
@@ -40,7 +39,6 @@ public class VolumeKeyService extends NotificationListenerService implements OnV
 
         mediaSessionManager = getSystemService(MediaSessionManager.class);
         mHandler = new Handler();
-
     }
 
     @Override
@@ -50,14 +48,15 @@ public class VolumeKeyService extends NotificationListenerService implements OnV
         mMediaNotPlayingEnable = intent.getBooleanExtra("MEDIA_NOT_PLAYING", false);
         mDebug = intent.getBooleanExtra("DEBUG", false);
         boolean permission = intent.getBooleanExtra("PERMISSION", false);
-        Log.d("mumu", "onStartCommand -> permission = " + permission
+        Log.d("cilenco", "onStartCommand -> permission = " + permission
                 + "mServiceEnabled = " + mServiceEnabled
                 + "mScreenOnEnable = " + mScreenOnEnable
                 + "mMediaNotPlayingEnable = " + mMediaNotPlayingEnable);
+
         if (mServiceEnabled && permission) {
-            mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
+            //mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
         } else {
-            mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
+            //mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -69,12 +68,12 @@ public class VolumeKeyService extends NotificationListenerService implements OnV
         mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
     }
 
-    @Override
+    //@Override
     public void onVolumeKeyLongPress(KeyEvent keyEvent) {
         boolean isScreenOn = powerManager.isInteractive();
         boolean isMusicPlaying = audioManager.isMusicActive();
 
-        Log.d("mumu", keyEvent.getKeyCode() + ", " + keyEvent.getFlags() + ", " + keyEvent.isLongPress());
+        Log.d("cilenco", keyEvent.getKeyCode() + ", " + keyEvent.getFlags() + ", " + keyEvent.isLongPress());
 
         if (keyEvent.getFlags() != FLAG_FROM_ADB
                 && (keyEvent.getFlags() & FLAG_LONG_PRESS) == 0
@@ -99,12 +98,13 @@ public class VolumeKeyService extends NotificationListenerService implements OnV
             }
             return;
         }
+
         //TODO: let MediaSessionManager deal with it
         if (mDebug && keyEvent.getRepeatCount() == 0 && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
             Toast.makeText(getContext(), getString(R.string.msg_do_nothing), Toast.LENGTH_SHORT).show();
         }
         mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
         mediaSessionManager.dispatchVolumeKeyEvent(keyEvent, audioManager.getUiSoundsStreamType(), false);
-        mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
+        //mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
     }
 }

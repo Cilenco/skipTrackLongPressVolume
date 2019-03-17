@@ -1,10 +1,12 @@
 package com.cilenco.skiptrack.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class SystemActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+// Must be splitted from Launcher activity because that can be hidden
+public class SystemActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,4 +17,5 @@ public class SystemActivity extends Activity {
 
         finish();
     }
+
 }
