@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.help, menu);
+        // FIXME inflater.inflate(R.menu.help, menu);
     }
 
     @Override // There is only one menu item to select
