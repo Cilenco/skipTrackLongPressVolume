@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/default_margin"
+    android:paddingRight="@dimen/default_margin"
+    android:paddingTop="@dimen/default_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/permission_command"
+        android:background="@android:color/darker_gray"
+        android:textColor="@android:color/white"
+        android:padding="@dimen/text_margin"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+</HorizontalScrollView>

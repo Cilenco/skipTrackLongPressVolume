@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Skip Track Settings</string>
+
+    <string name="hide_icon_title">App ausblenden</string>
+    <string name="hide_icon_summary">Versteckt das App Symbols</string>
+
+    <string name="enable_service_title">Service aktivieren</string>
+    <string name="enable_service_summary">Wechsel zwischen Liedern durch langes drücken der Lautstärketasten</string>
+
+    <string name="developer_options">Entwickleroptionen</string>
+
+    <string name="enable_debug_title">Debug Nachrichten</string>
+    <string name="enable_debug_summary">Nur für Entwickler geeignet</string>
+
+    <string name="enable_screen_title">Bildschirm an</string>
+    <string name="enable_screen_summary">Zwischen Liedern wechseln, während der Bildschirm an ist</string>
+
+    <string name="enable_media_title">Without media</string>
+    <string name="enable_media_summary">Reagiere auch ohne Musik auf Events</string>
+
+    <string name="permission_title">Berechtigung fehlt</string>
+    <string name="permission_description">Damit diese App funktioniert, müssen Sie den folgenden Befehl über adb ausführen, während dieses Gerät mit einem Computer verbunden ist.</string>
+
+    <string name="help">Hilfe</string>
+
+    <string name="help_title">Help title</string>
+    <string name="help_description">Help description</string>
+
+    <string name="msg_media_next">Nächster song</string>
+    <string name="msg_media_pre">Vorheriger song</string>
+</resources>

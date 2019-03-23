@@ -3,8 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment android:name="com.cilenco.skiptrack.ui.SettingsFragment"
-        android:id="@+id/list"
+    <fragment android:name="com.cilenco.skiptrack.ui.fragments.SettingsFragment"
+        android:id="@+id/settingsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

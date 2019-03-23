@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="@string/pref_hide_icon"
-        android:summary="@string/hide_icon_summary"
-        android:title="@string/hide_icon_title"
-        app:icon="@drawable/launcher"/>
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
@@ -19,10 +12,39 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
-        android:dependency="@string/pref_service"
-        android:key="@string/pref_debug"
-        android:title="@string/enable_debug_title"
-        android:summary="@string/enable_debug_summary"
-        app:icon="@drawable/debug" />
+        android:key="@string/pref_hide_icon"
+        android:summary="@string/hide_icon_summary"
+        android:title="@string/hide_icon_title"
+        app:icon="@drawable/launcher"/>
 
-</androidx.preference.PreferenceScreen>
+    <PreferenceCategory
+        android:title="@string/developer_options"
+        android:key="devOptions">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:dependency="@string/pref_service"
+            android:key="@string/pref_debug"
+            android:title="@string/enable_debug_title"
+            android:summary="@string/enable_debug_summary"
+            app:icon="@drawable/debug" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:dependency="@string/pref_service"
+            android:key="@string/pref_screen"
+            android:title="@string/enable_screen_title"
+            android:summary="@string/enable_screen_summary"
+            app:icon="@drawable/screen" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:dependency="@string/pref_service"
+            android:key="@string/pref_no_media"
+            android:title="@string/enable_media_title"
+            android:summary="@string/enable_media_summary"
+            app:icon="@drawable/media" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -2,22 +2,38 @@
     <string name="app_name">Skip Track Settings</string>
 
     <string name="pref_service" translatable="false">pref_service</string>
-    <string name="pref_hide_icon" translatable="false">pref_hideIcon</string>
+    <string name="pref_hide_icon" translatable="false">pref_hide_icon</string>
+    <string name="pref_screen" translatable="false">pref_screen_off</string>
     <string name="pref_debug" translatable="false">pref_enable_debug</string>
+    <string name="pref_no_media" translatable="false">pref_no_media</string>
+
+    <string name="permission_command" translatable="false">adb shell pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER</string>
 
     <string name="hide_icon_title">Hide launcher icon</string>
     <string name="hide_icon_summary">Do not show the app icon in launcher</string>
 
     <string name="enable_service_title">Enable Service</string>
-    <string name="enable_service_summary">active when screen is OFF and media is PLAYING</string>
+    <string name="enable_service_summary">Switch between songs by long pressing the volume buttons</string>
+
+    <string name="developer_options">Developer options</string>
 
     <string name="enable_debug_title">Enable debug messages</string>
     <string name="enable_debug_summary">Only enable this if you are a developer</string>
 
-    <string name="msg_start_service">Service stated</string>
-    <string name="msg_media_next">Next song</string>
-    <string name="msg_media_pre">Previous song</string>
-    <string name="msg_do_nothing">Nothing to do</string>
+    <string name="enable_screen_title">Screen on</string>
+    <string name="enable_screen_summary">Switch between tracks while screen is on</string>
+
+    <string name="enable_media_title">Without media</string>
+    <string name="enable_media_summary">React to events while no music is playing</string>
+
+    <string name="permission_title">Missing permission</string>
+    <string name="permission_description">To make this app work you have to execute the following command via adb while this device is connected to a computer.</string>
 
     <string name="help">Help</string>
+
+    <string name="help_title">Help title</string>
+    <string name="help_description">Help description</string>
+
+    <string name="msg_media_next">Next song</string>
+    <string name="msg_media_pre">Previous song</string>
 </resources>

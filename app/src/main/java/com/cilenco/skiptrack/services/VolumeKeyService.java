@@ -7,32 +7,42 @@ import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.content.Intent;
 import android.widget.Toast;
 
 import com.cilenco.skiptrack.R;
 
-import static android.view.KeyEvent.FLAG_LONG_PRESS;
+import net.grandcentrix.tray.AppPreferences;
+import net.grandcentrix.tray.core.OnTrayPreferenceChangeListener;
+import net.grandcentrix.tray.core.TrayItem;
+
+import java.util.Collection;
+
 import static android.view.KeyEvent.FLAG_FROM_SYSTEM;
 import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
 
-public class VolumeKeyService extends NotificationListenerService { //implements OnVolumeKeyLongPressListener {
-    private static final int FLAG_FROM_ADB = 0;
-    private MediaSessionManager mediaSessionManager;
+import static com.cilenco.skiptrack.utils.Constants.*;
 
+public class VolumeKeyService extends NotificationListenerService implements MediaSessionManager.OnVolumeKeyLongPressListener, OnTrayPreferenceChangeListener {
+    private AppPreferences preferences;
+
+    private MediaSessionManager mediaSessionManager;
     private PowerManager powerManager;
     private AudioManager audioManager;
+
     private Handler mHandler;
-    private boolean mServiceEnabled;
-    private boolean mScreenOnEnable;
-    private boolean mMediaNotPlayingEnable;
-    private boolean mDebug;
+
+    private boolean debugEnabled;
+    private boolean prefScreenOn;
+    private boolean prefNoMedia;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        preferences = new AppPreferences(this);
+        preferences.registerOnTrayPreferenceChangeListener(this);
 
         audioManager = getSystemService(AudioManager.class);
         powerManager = getSystemService(PowerManager.class);
@@ -42,69 +52,64 @@ public class VolumeKeyService extends NotificationListenerService { //implements
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mServiceEnabled = intent.getBooleanExtra("ENABLED", false);
-        mScreenOnEnable = intent.getBooleanExtra("SCREEN_ON", false);
-        mMediaNotPlayingEnable = intent.getBooleanExtra("MEDIA_NOT_PLAYING", false);
-        mDebug = intent.getBooleanExtra("DEBUG", false);
-        boolean permission = intent.getBooleanExtra("PERMISSION", false);
-        Log.d("cilenco", "onStartCommand -> permission = " + permission
-                + "mServiceEnabled = " + mServiceEnabled
-                + "mScreenOnEnable = " + mScreenOnEnable
-                + "mMediaNotPlayingEnable = " + mMediaNotPlayingEnable);
+    public void onTrayPreferenceChanged(Collection<TrayItem> items) {
+        boolean permission = preferences.getBoolean(PREF_PERMISSION, false);
+        boolean serviceEnabled = preferences.getBoolean(PREF_ENABLED, false);
 
-        if (mServiceEnabled && permission) {
-            //mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
+        debugEnabled = preferences.getBoolean(PREF_DEBUG, false);
+        prefScreenOn = preferences.getBoolean(PREF_SCREEN_ON, false);
+        prefNoMedia = preferences.getBoolean(PREF_NO_MEDIA, false);
+
+        if(serviceEnabled && permission) {
+            mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
+            Log.d("cilenco", "Registered VolumeKeyListener");
         } else {
-            //mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
+            mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
+            Log.d("cilenco", "Unregistered VolumeKeyListener");
         }
-
-        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        preferences.unregisterOnTrayPreferenceChangeListener(this);
         mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
     }
 
-    //@Override
+    @Override
     public void onVolumeKeyLongPress(KeyEvent keyEvent) {
-        boolean isScreenOn = powerManager.isInteractive();
-        boolean isMusicPlaying = audioManager.isMusicActive();
+        boolean screenOn = powerManager.isInteractive();
+        boolean musicPlaying = audioManager.isMusicActive();
 
-        Log.d("cilenco", keyEvent.getKeyCode() + ", " + keyEvent.getFlags() + ", " + keyEvent.isLongPress());
+        if(keyEvent.getFlags() != FLAG_FROM_SYSTEM) return;
 
-        if (keyEvent.getFlags() != FLAG_FROM_ADB
-                && (keyEvent.getFlags() & FLAG_LONG_PRESS) == 0
+        /*        && (keyEvent.getFlags() & FLAG_LONG_PRESS) == 0
                 && (keyEvent.getFlags() & FLAG_FROM_SYSTEM) == 0) {
             return;
-        }
+        }*/
 
-        if ((isMusicPlaying || mMediaNotPlayingEnable) && (!isScreenOn || mScreenOnEnable)) {
-            //TODO: skip track
-            if (keyEvent.getKeyCode() == KEYCODE_VOLUME_UP) {
-                KeyEvent event = new KeyEvent(keyEvent.getAction(), KEYCODE_MEDIA_PREVIOUS);
-                audioManager.dispatchMediaKeyEvent(event);
-                if (mDebug && keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getRepeatCount() == 0) {
-                    Toast.makeText(getContext(), getString(R.string.msg_media_pre), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                KeyEvent event = new KeyEvent(keyEvent.getAction(), KEYCODE_MEDIA_NEXT);
-                audioManager.dispatchMediaKeyEvent(event);
-                if (mDebug && keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getRepeatCount() == 0) {
-                    Toast.makeText(getContext(), getString(R.string.msg_media_next), Toast.LENGTH_SHORT).show();
-                }
+        if((musicPlaying || prefNoMedia) && (!screenOn || prefScreenOn)) {
+
+            if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getRepeatCount() == 0) {
+                int keyCode = keyEvent.getKeyCode();
+
+                int event = (keyCode == KEYCODE_VOLUME_UP) ? KEYCODE_MEDIA_NEXT : KEYCODE_MEDIA_PREVIOUS;
+                int msgRes = (keyCode == KEYCODE_VOLUME_UP) ? R.string.msg_media_next : R.string.msg_media_pre;
+
+                KeyEvent skipEvent = new KeyEvent(KeyEvent.ACTION_UP, event);
+                audioManager.dispatchMediaKeyEvent(skipEvent);
+
+                if (debugEnabled) Toast.makeText(this, getString(msgRes), Toast.LENGTH_SHORT).show();
             }
+
             return;
         }
 
-        //TODO: let MediaSessionManager deal with it
-        if (mDebug && keyEvent.getRepeatCount() == 0 && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-            Toast.makeText(getContext(), getString(R.string.msg_do_nothing), Toast.LENGTH_SHORT).show();
-        }
+        // Let the MediaSessionManager deal with the event
+
         mediaSessionManager.setOnVolumeKeyLongPressListener(null, null);
         mediaSessionManager.dispatchVolumeKeyEvent(keyEvent, audioManager.getUiSoundsStreamType(), false);
-        //mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
+        mediaSessionManager.setOnVolumeKeyLongPressListener(this, mHandler);
     }
 }
