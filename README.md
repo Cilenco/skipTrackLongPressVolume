@@ -2,7 +2,7 @@
 This repo provides a systemless and standalone application which let's you skip tracks on your Android (8.0+) phone by long pressing the volume keys while the screen is off. It doesn't require root but has to be flashed through a custom recovery. The latest release can be found here.
 
 ### For developers
-Please feel free to send me pull requests for improvements, stability and new feature ideas. Because the application uses the hidden API you have to use a modified version of the [android.jar](https://github.com/Trumeet/android-hidden-api) file for compiling. For this download the required android.jar file from the linked repo and replace it with original one in `<SDK location>/platforms/android-<API version>/`.
+Please feel free to send me pull requests for improvements, stability and new feature ideas. Because the application uses the hidden API you have to use a modified version of the [android.jar](https://github.com/anggrayudi/android-hidden-api) file for compiling. For this download the required android.jar file from the linked repo and replace it with original one in `<SDK location>/platforms/android-<API version>/`.
 
 If you change the `targetSdk` or `minimumSdk` make sure to use the proper file.
 
