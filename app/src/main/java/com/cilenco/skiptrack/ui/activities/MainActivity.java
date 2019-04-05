@@ -1,6 +1,7 @@
 package com.cilenco.skiptrack.ui.activities;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,7 +14,7 @@ import net.grandcentrix.tray.AppPreferences;
 
 import static com.cilenco.skiptrack.utils.Constants.PREF_PERMISSION;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogInterface.OnClickListener {
     private static final String PERMISSION = Manifest.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER;
 
     @Override
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-            builder.setPositiveButton(android.R.string.ok,(dialog, which) -> finishAndRemoveTask());
+            builder.setPositiveButton(android.R.string.ok, this);
 
             builder.setView(R.layout.dialog_permission);
             builder.setMessage(R.string.permission_description);
@@ -47,5 +48,10 @@ public class MainActivity extends AppCompatActivity {
 
             builder.show();
         }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        finishAndRemoveTask();
     }
 }
