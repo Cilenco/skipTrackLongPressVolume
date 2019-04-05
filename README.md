@@ -2,7 +2,7 @@
 This repo provides a systemless and standalone application which let's you skip tracks on your Android Oreo (8.0+) device by long pressing the volume keys while the screen is off. It doesn't require root but a permission has to be granted to the app via adb. For more information see the details below.
 
 ### Installation
-Download the newst version of the apk here and install it as usual on your device. After that connect your device to a computer, enable developer settings and fire up following command:
+Download the newst version of the apk [here](https://github.com/Cilenco/skipTrackLongPressVolume/releases) and install it as usual on your device. After that connect your device to a computer, enable developer settings and fire up following command:
 
     adb shell pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER
 
