@@ -18,11 +18,15 @@ import net.grandcentrix.tray.core.TrayItem;
 import java.util.Collection;
 
 import static android.view.KeyEvent.FLAG_FROM_SYSTEM;
+import static android.view.KeyEvent.FLAG_LONG_PRESS;
 import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
-
-import static com.cilenco.skiptrack.utils.Constants.*;
+import static com.cilenco.skiptrack.utils.Constants.PREF_DEBUG;
+import static com.cilenco.skiptrack.utils.Constants.PREF_ENABLED;
+import static com.cilenco.skiptrack.utils.Constants.PREF_NO_MEDIA;
+import static com.cilenco.skiptrack.utils.Constants.PREF_PERMISSION;
+import static com.cilenco.skiptrack.utils.Constants.PREF_SCREEN_ON;
 
 public class VolumeKeyService extends NotificationListenerService implements MediaSessionManager.OnVolumeKeyLongPressListener, OnTrayPreferenceChangeListener {
     private AppPreferences preferences;
@@ -82,22 +86,20 @@ public class VolumeKeyService extends NotificationListenerService implements Med
         boolean screenOn = powerManager.isInteractive();
         boolean musicPlaying = audioManager.isMusicActive();
 
-        if(keyEvent.getFlags() != FLAG_FROM_SYSTEM) return;
+        int flags = keyEvent.getFlags();
 
-        /*        && (keyEvent.getFlags() & FLAG_LONG_PRESS) == 0
-                && (keyEvent.getFlags() & FLAG_FROM_SYSTEM) == 0) {
-            return;
-        }*/
+        //if(keyEvent.getFlags() != FLAG_FROM_SYSTEM) return;
+        if(!(flags == FLAG_FROM_SYSTEM || flags == FLAG_LONG_PRESS)) return;
 
         if((musicPlaying || prefNoMedia) && (!screenOn || prefScreenOn)) {
 
-            if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getRepeatCount() == 0) {
+            if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getRepeatCount() <= 1) {
                 int keyCode = keyEvent.getKeyCode();
 
                 int event = (keyCode == KEYCODE_VOLUME_UP) ? KEYCODE_MEDIA_NEXT : KEYCODE_MEDIA_PREVIOUS;
                 int msgRes = (keyCode == KEYCODE_VOLUME_UP) ? R.string.msg_media_next : R.string.msg_media_pre;
 
-                KeyEvent skipEvent = new KeyEvent(KeyEvent.ACTION_UP, event);
+                KeyEvent skipEvent = new KeyEvent(keyEvent.getAction(), event);
                 audioManager.dispatchMediaKeyEvent(skipEvent);
 
                 if (debugEnabled) Toast.makeText(this, getString(msgRes), Toast.LENGTH_SHORT).show();

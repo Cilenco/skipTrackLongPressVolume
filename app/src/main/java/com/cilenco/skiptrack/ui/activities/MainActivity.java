@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{PERMISSION}, 1);
+        }else {
+            AppPreferences prefs = new AppPreferences(this);
+            prefs.put(PREF_PERMISSION, true);
         }
     }
 
