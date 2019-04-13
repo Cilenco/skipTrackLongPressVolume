@@ -29,4 +29,6 @@
 
     <string name="msg_media_next">Nächster song</string>
     <string name="msg_media_pre">Vorheriger song</string>
+    <string name="enable_power_title">Deaktivieren Sie die Batterieoptimierung</string>
+    <string name="enable_power_summary">Dadurch kann die App teilweise von Doze- und App Standby-Optimierungen befreit werden.</string>
 </resources>

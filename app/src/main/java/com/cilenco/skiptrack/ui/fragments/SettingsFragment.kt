@@ -1,6 +1,7 @@
 package com.cilenco.skiptrack.ui.fragments
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -19,16 +20,22 @@ import com.cilenco.skiptrack.utils.TrayPreferenceStore
 import android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
 import android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 import android.content.pm.PackageManager.DONT_KILL_APP
+import android.net.Uri
+import android.os.Build
+import android.os.PowerManager
+import android.util.Log
 import com.cilenco.skiptrack.utils.Constants.Companion.PERMISSION_REQUEST
 import com.cilenco.skiptrack.utils.Constants.Companion.PERMISSION_REQUEST_ID
 import com.cilenco.skiptrack.utils.Constants.Companion.PREF_ENABLED
 import com.cilenco.skiptrack.utils.Constants.Companion.PREF_HIDE_ICON
+import com.cilenco.skiptrack.utils.Constants.Companion.PREF_POWER
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -70,7 +77,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         } else if (PREF_ENABLED == preference.key) {
             val serviceEnabled = (preference as SwitchPreferenceCompat).isChecked
             if (serviceEnabled) enableNotificationListener()
+        } else if (PREF_POWER == preference.key) {
+            val power = (preference as SwitchPreferenceCompat).isChecked
+
+            if (power) disableBatteryOptimization()
+            else startActivityForResult(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS), PERMISSION_REQUEST_ID)
+
         }
+
 
         return super.onPreferenceTreeClick(preference)
     }
@@ -83,6 +97,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val requestIntent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             requestIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivityForResult(requestIntent, PERMISSION_REQUEST_ID)
+        }
+    }
+    private fun disableBatteryOptimization(){
+        val intent = Intent()
+        val packageName = context!!.packageName
+        val pm = context!!.getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (pm.isIgnoringBatteryOptimizations(packageName)) {
+            Log.i("cilenco", "ignoring")
+            intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+            context!!.startActivity(intent)
+        } else {
+            Log.i("cilenco", "ignoring2")
+            intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            intent.data = Uri.parse("package:$packageName")
+            context!!.startActivity(intent)
         }
     }
 }

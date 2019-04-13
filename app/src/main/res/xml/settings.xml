@@ -44,6 +44,13 @@
             android:title="@string/enable_media_title"
             android:summary="@string/enable_media_summary"
             app:icon="@drawable/media" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:dependency="@string/pref_service"
+            android:key="@string/pref_power"
+            android:title="@string/enable_power_title"
+            android:summary="@string/enable_power_summary"
+            app:icon="@drawable/power" />
 
     </PreferenceCategory>
 

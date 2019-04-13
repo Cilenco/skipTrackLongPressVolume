@@ -12,5 +12,6 @@ interface Constants {
         const val PREF_NO_MEDIA = "pref_no_media"
         const val PREF_ENABLED = "pref_service"
         const val PREF_DEBUG = "pref_enable_debug"
+        const val PREF_POWER = "pref_power"
     }
 }
