@@ -21,7 +21,6 @@ import android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED
 import android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 import android.content.pm.PackageManager.DONT_KILL_APP
 import android.net.Uri
-import android.os.Build
 import android.os.PowerManager
 import android.util.Log
 import com.cilenco.skiptrack.utils.Constants.Companion.PERMISSION_REQUEST

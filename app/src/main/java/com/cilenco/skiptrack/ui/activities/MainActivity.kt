@@ -6,14 +6,11 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 
 import com.cilenco.skiptrack.R
 import com.cilenco.skiptrack.utils.Constants.Companion.PREF_PERMISSION
-import com.cilenco.skiptrack.utils.RootAccess
 
 import net.grandcentrix.tray.AppPreferences
-import eu.chainfire.libsuperuser.Shell
 
 /**
  * Created by Cilenco on 2019/03/28
@@ -25,7 +22,6 @@ import eu.chainfire.libsuperuser.Shell
 
 
 class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
-    private var permissionCmd = arrayOf("su", "pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -43,29 +39,20 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if(Shell.SU.available()){
-            Log.d("cilenco", "You is Root :)")
-            val shell = Shell.Pool.SU.get()
-            RootAccess.runCommands(permissionCmd)
-            shell.run("pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER")
-
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            val prefs = AppPreferences(this)
+            prefs.put(PREF_PERMISSION, true)
         } else {
+            val builder = AlertDialog.Builder(this)
 
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                val prefs = AppPreferences(this)
-                prefs.put(PREF_PERMISSION, true)
-            } else {
-                val builder = AlertDialog.Builder(this)
+            builder.setPositiveButton(android.R.string.ok, this)
 
-                builder.setPositiveButton(android.R.string.ok, this)
+            builder.setView(R.layout.dialog_permission)
+            builder.setMessage(R.string.permission_description)
+            builder.setTitle(R.string.permission_title)
+            builder.setCancelable(false)
 
-                builder.setView(R.layout.dialog_permission)
-                builder.setMessage(R.string.permission_description)
-                builder.setTitle(R.string.permission_title)
-                builder.setCancelable(false)
-
-                builder.show()
-            }
+            builder.show()
         }
     }
 
