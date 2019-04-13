@@ -33,8 +33,6 @@ class VolumeKeyService : NotificationListenerService(), MediaSessionManager.OnVo
     private var powerManager: PowerManager? = null
     private var audioManager: AudioManager? = null
 
-    private var mHandler: Handler? = null
-
     private var debugEnabled: Boolean = false
     private var prefScreenOn: Boolean = false
     private var prefNoMedia: Boolean = false
@@ -49,7 +47,6 @@ class VolumeKeyService : NotificationListenerService(), MediaSessionManager.OnVo
         powerManager = getSystemService(PowerManager::class.java)
 
         mediaSessionManager = getSystemService(MediaSessionManager::class.java)
-        mHandler = Handler()
     }
 
     override fun onTrayPreferenceChanged(items: Collection<TrayItem>) {
@@ -61,7 +58,7 @@ class VolumeKeyService : NotificationListenerService(), MediaSessionManager.OnVo
         prefNoMedia = preferences!!.getBoolean(PREF_NO_MEDIA, false)
 
         if (serviceEnabled && permission) {
-            mediaSessionManager!!.setOnVolumeKeyLongPressListener(this, mHandler)
+            mediaSessionManager!!.setOnVolumeKeyLongPressListener(this, Handler())
             Log.d("cilenco", "Registered VolumeKeyListener")
         } else {
             mediaSessionManager!!.setOnVolumeKeyLongPressListener(null, null)
@@ -106,6 +103,6 @@ class VolumeKeyService : NotificationListenerService(), MediaSessionManager.OnVo
 
         mediaSessionManager!!.setOnVolumeKeyLongPressListener(null, null)
         mediaSessionManager!!.dispatchVolumeKeyEvent(keyEvent, audioManager!!.uiSoundsStreamType, false)
-        mediaSessionManager!!.setOnVolumeKeyLongPressListener(this, mHandler)
+        mediaSessionManager!!.setOnVolumeKeyLongPressListener(this, Handler())
     }
 }
