@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
         if(Shell.SU.available()){
             Log.d("cilenco", "You is Root :)")
             val shell = Shell.Pool.SU.get()
-            shell.run("shell pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER")
+            shell.run("pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER")
         } else {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
