@@ -10,15 +10,22 @@ import android.util.Log
 
 import com.cilenco.skiptrack.R
 import com.cilenco.skiptrack.utils.Constants.Companion.PREF_PERMISSION
+import com.cilenco.skiptrack.utils.RootAccess
 
 import net.grandcentrix.tray.AppPreferences
 import eu.chainfire.libsuperuser.Shell
 
-
+/**
+ * Created by Cilenco on 2019/03/28
+ * @author Cilenco
+ *
+ * @description The Main activity of the SkipTrack app. It checks if the permission for Volume Listener is granted.
+ * It can self grant the permission using root
+ */
 
 
 class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
-
+    private var permissionCmd = arrayOf("su", "pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -39,7 +46,9 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
         if(Shell.SU.available()){
             Log.d("cilenco", "You is Root :)")
             val shell = Shell.Pool.SU.get()
+            RootAccess.runCommands(permissionCmd)
             shell.run("pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER")
+
         } else {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
