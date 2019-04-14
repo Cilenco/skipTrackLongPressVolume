@@ -8,7 +8,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 
 import com.cilenco.skiptrack.R
-import com.cilenco.skiptrack.utils.Constants.Companion.PREF_PERMISSION
+import com.cilenco.skiptrack.utils.Constants.PREF_PERMISSION
 
 import net.grandcentrix.tray.AppPreferences
 
@@ -19,9 +19,12 @@ import net.grandcentrix.tray.AppPreferences
  * @description The Main activity of the SkipTrack app. It checks if the permission for Volume Listener is granted.
  * It can self grant the permission using root
  */
-
-
 class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
+
+    companion object {
+        private const val PERMISSION = Manifest.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -58,9 +61,5 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnClickListener {
 
     override fun onClick(dialog: DialogInterface, which: Int) {
         finishAndRemoveTask()
-    }
-
-    companion object {
-        private const val PERMISSION = Manifest.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER
     }
 }
