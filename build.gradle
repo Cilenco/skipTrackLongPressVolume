@@ -19,6 +19,13 @@ allprojects {
         jcenter()
     }
 
+    tasks {
+        wrapper {
+            gradleVersion = "5.4-rc-1"
+            distributionType = Wrapper.DistributionType.ALL
+        }
+    }
+
     gradle.taskGraph.whenReady {
         tasks.each { task ->
             if (task.name == 'mockableAndroidJar') {
