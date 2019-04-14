@@ -33,6 +33,12 @@ allprojects {
             }
         }
     }
+    // Add android.jar to bootclasspath so it'll override the jar from the SDK.
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xbootclasspath/p:libs/android.jar"
+        }
+    }
 }
 
 task clean(type: Delete) {
