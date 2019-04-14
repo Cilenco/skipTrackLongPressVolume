@@ -10,9 +10,7 @@ On startup the app will check if has the permission. If you don't see any messag
 
 
 ### For developers
-Please feel free to send me pull requests for improvements, stability and new feature ideas. Because the application uses the hidden API you have to use a modified version of the [android.jar](https://github.com/anggrayudi/android-hidden-api) file for compiling. For this download the required android.jar file from the linked repo and replace it with original one in `<SDK location>/platforms/android-<API version>/`.
-
-If you change the `targetSdk` or `minimumSdk` make sure to use the proper file.
+Please feel free to send me pull requests for improvements, stability and new feature ideas.
 
 ### Testing
 You can test this app on an emulator by just giving it the permission as described above. After that you can send long press events of the volume keys to the emulator with following lines:
