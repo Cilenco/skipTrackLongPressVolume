@@ -6,6 +6,7 @@
     <string name="pref_screen" translatable="false">pref_screen_off</string>
     <string name="pref_debug" translatable="false">pref_enable_debug</string>
     <string name="pref_no_media" translatable="false">pref_no_media</string>
+    <string name="pref_power" translatable="false">pref_power</string>
 
     <string name="permission_command" translatable="false">adb shell pm grant com.cilenco.skiptrack android.permission.SET_VOLUME_KEY_LONG_PRESS_LISTENER</string>
 
@@ -36,4 +37,7 @@
 
     <string name="msg_media_next">Next song</string>
     <string name="msg_media_pre">Previous song</string>
+
+    <string name="enable_power_title">Disable Battery Optimization</string>
+    <string name="enable_power_summary">This allows the app to be partially exempt from Doze and App Standby optimizations.</string>
 </resources>
